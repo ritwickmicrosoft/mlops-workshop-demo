@@ -1,21 +1,45 @@
-# Core Azure ML + auth
-azure-ai-ml
-azure-identity
+## Workshop Python dependencies
+# Recommended local dev runtime: Python 3.11.x (this repo was validated with a .venv311).
+# Note: Azure ML jobs/pipelines use curated Azure ML environments at runtime; this file
+# is for your local notebook + job submission scripts.
 
-# Feature Store assets (FeatureStoreEntity / FeatureSet) are managed via azure-ai-ml
+# -----------------------------------------------------------------------------
+# Core Azure ML SDK + auth (pin to known-good versions)
+# -----------------------------------------------------------------------------
+azure-ai-ml==1.31.0
+azure-identity==1.25.1
+azure-core==1.38.0
 
-# MLflow integration with Azure ML
+# -----------------------------------------------------------------------------
+# MLflow tracking + Azure ML MLflow integration
+# -----------------------------------------------------------------------------
 mlflow==2.16.2
 azureml-mlflow==1.60.0
 
+# -----------------------------------------------------------------------------
 # Data + modeling
-numpy<2.0  # Pin to NumPy 1.x to match Azure ML sklearn-1.5 environment
-pandas
-scikit-learn
+# -----------------------------------------------------------------------------
+# IMPORTANT: keep NumPy on 1.x for compatibility with Azure ML curated sklearn runtimes
+# and to avoid the NumPy 2.x binary-compat issues that can break deployed scoring.
+numpy==1.26.4
+pandas==2.3.3
+scikit-learn==1.8.0
 
-# Notebook experience
-ipykernel
+# Notebook kernel support (VS Code / Jupyter)
+ipykernel>=6.29,<8
 
-# Azure management SDKs (used by governance/audit demos)
-azure-mgmt-monitor
-azure-mgmt-authorization
+# -----------------------------------------------------------------------------
+# Governance / management SDKs
+# -----------------------------------------------------------------------------
+azure-mgmt-monitor==7.0.0
+azure-mgmt-authorization==4.0.0
+
+# -----------------------------------------------------------------------------
+# Feature store (04-feature-store)
+# -----------------------------------------------------------------------------
+# Used by feature_store_setup.py (management-plane). Pin to a valid published version.
+azure-mgmt-machinelearningservices==1.0.0
+
+# Optional: only needed if you run Spark transforms locally. Azure ML Spark compute
+# supplies Spark runtime dependencies; installing PySpark locally is usually unnecessary.
+# pyspark>=3.5,<4
