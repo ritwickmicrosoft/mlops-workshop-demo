@@ -4,14 +4,14 @@ End-to-end Azure ML + MLflow hands-on workshop demonstrating production MLOps pa
 
 ## 🎯 What You'll Learn
 
-| Module | Topic | Time |
-|--------|-------|------|
-| 1 | Environment Setup | 10 min |
-| 2 | Train & Track with MLflow | 15 min |
-| 3 | Batch Endpoint Deployment | 10 min |
-| 4 | Automated Retraining Pipeline | 10 min |
-| 5 | Drift Detection (Observability) | 10 min |
-| 6 | Governance & Audit Logging | 5 min |
+| Module | Topic | Key Concepts | Azure Services | Difficulty |
+|--------|-------|--------------|----------------|------------|
+| 1 | Environment Setup | SDK auth, workspace config | Azure ML Workspace, Key Vault | Beginner |
+| 2 | Train & Track with MLflow | Experiment runs, metrics, artifacts | MLflow Tracking, Model Registry | Beginner |
+| 3 | Batch Endpoint Deployment | Model deployment, scoring | Batch Endpoints, Compute Clusters | Intermediate |
+| 4 | Automated Retraining Pipeline | Pipeline components, orchestration | Azure ML Pipelines | Intermediate |
+| 5 | Drift Detection (Observability) | PSI, JSD, data quality metrics | Jobs, Metrics Logging | Intermediate |
+| 6 | Governance & Audit Logging | Activity logs, compliance | Azure Monitor, RBAC | Beginner |
 
 ## 📁 Project Structure
 
