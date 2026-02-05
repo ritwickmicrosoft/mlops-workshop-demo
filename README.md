@@ -67,7 +67,7 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
 ### 3. Run the Workshop
 
 **Option A: Interactive Playbook** (recommended)
-- Open `MLOps_Workshop_Playbook.html` in your browser
+- Open the [**Workshop Playbook**](https://htmlpreview.github.io/?https://github.com/ritwickmicrosoft/mlops-workshop-demo/blob/main/MLOps_Workshop_Playbook.html) in your browser
 - Follow the step-by-step guide with checkboxes
 
 **Option B: Notebook Only**
@@ -125,4 +125,4 @@ az ml online-endpoint delete -n spam-clf-* -g $env:AZURE_RESOURCE_GROUP -w $env:
 
 ---
 
-**Workshop Playbook:** Open `MLOps_Workshop_Playbook.html` for the full interactive guide.
+**Workshop Playbook:** [**Open Interactive Guide**](https://htmlpreview.github.io/?https://github.com/ritwickmicrosoft/mlops-workshop-demo/blob/main/MLOps_Workshop_Playbook.html)
