@@ -24,6 +24,9 @@ param tags object = {
   Owner: 'AI-Centre'
 }
 
+@description('Optional: Principal ID of the workshop user to grant AzureML Data Scientist role. Leave empty to skip.')
+param workshopUserPrincipalId string = ''
+
 // ============================================================================
 // VARIABLES
 // ============================================================================
@@ -175,6 +178,61 @@ resource computeCluster 'Microsoft.MachineLearningServices/workspaces/computes@2
         nodeIdleTimeBeforeScaleDown: 'PT5M'
       }
     }
+  }
+}
+
+// ============================================================================
+// RBAC ROLE ASSIGNMENTS (Workshop-critical - avoids manual Portal clicks)
+// ============================================================================
+
+// Built-in role IDs
+var storageBlobDataContributor = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+var keyVaultSecretsUser = '4633458b-17de-408a-b874-0445c86b69e6'
+var acrPush = '8311e382-0749-4cb8-b61a-304f252e45ec'
+
+// ML workspace identity -> Storage Blob Data Contributor
+resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, mlWorkspace.id, storageBlobDataContributor)
+  scope: storageAccount
+  properties: {
+    principalId: mlWorkspace.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', storageBlobDataContributor)
+  }
+}
+
+// ML workspace identity -> Key Vault Secrets User (required when enableRbacAuthorization = true)
+resource keyVaultRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, mlWorkspace.id, keyVaultSecretsUser)
+  scope: keyVault
+  properties: {
+    principalId: mlWorkspace.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretsUser)
+  }
+}
+
+// ML workspace identity -> AcrPush (push/pull images for environments & batch deployments)
+resource acrRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, mlWorkspace.id, acrPush)
+  scope: containerRegistry
+  properties: {
+    principalId: mlWorkspace.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', acrPush)
+  }
+}
+
+// Optional: Grant workshop user AzureML Data Scientist role on workspace
+var azureMLDataScientist = 'f6c7c914-8db3-469d-8ca1-694a8f32e121'
+
+resource workshopUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(workshopUserPrincipalId)) {
+  name: guid(mlWorkspace.id, workshopUserPrincipalId, azureMLDataScientist)
+  scope: mlWorkspace
+  properties: {
+    principalId: workshopUserPrincipalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureMLDataScientist)
   }
 }
 
