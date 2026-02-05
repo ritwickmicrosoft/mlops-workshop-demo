@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+
+# Virtual environments
+.venv/
+.venv*/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local artifacts
+feature_importance.csv
+*.log
+
+# Generated outputs (clean before workshop)
+batch_outputs/
+batch_endpoint_outputs/
+batch_input.csv
+batch_endpoint_input.csv
+batch_scoring/
+_staging/
+audit_report.json
+temp_logs/
+
+# VS Code
+.vscode/

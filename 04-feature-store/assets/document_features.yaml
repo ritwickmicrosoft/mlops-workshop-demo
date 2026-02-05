@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/latest/feature_set.schema.json
+name: document_features
+version: "1"
+description: Document classification features shared across models
+stage: Development
+entities:
+  - azureml:document:1
+specification:
+  path: ./document_features_spec

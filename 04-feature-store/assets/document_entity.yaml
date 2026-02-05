@@ -1,0 +1,8 @@
+$schema: https://azuremlschemas.azureedge.net/latest/feature_store_entity.schema.json
+name: document
+version: "1"
+description: A document entity for classification features
+stage: Development
+index_columns:
+  - name: document_id
+    type: string

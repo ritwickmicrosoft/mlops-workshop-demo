@@ -1,0 +1,248 @@
+# GitHub Actions CI/CD Pipeline for Azure ML
+# Triggers on: Push to main, PR to main, or manual dispatch
+
+name: MLOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'pipelines/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_to_production:
+        description: 'Deploy to production endpoint'
+        required: true
+        default: 'false'
+
+env:
+  AZURE_ML_WORKSPACE: mlw-dnd-mlops-demo
+  AZURE_RESOURCE_GROUP: rg-dnd-mlops-demo
+  MODEL_NAME: dnd-classification-model
+
+jobs:
+  # ===========================================================================
+  # STAGE 1: Code Quality & Unit Tests
+  # ===========================================================================
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov flake8 black
+          
+      - name: Run linting
+        run: |
+          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          black --check src/
+          
+      - name: Run unit tests
+        run: |
+          pytest tests/unit/ --cov=src --cov-report=xml
+          
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+
+  # ===========================================================================
+  # STAGE 2: Model Training Pipeline
+  # ===========================================================================
+  train-model:
+    needs: code-quality
+    runs-on: ubuntu-latest
+    outputs:
+      model_version: ${{ steps.train.outputs.model_version }}
+      run_id: ${{ steps.train.outputs.run_id }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install Azure ML SDK
+        run: pip install azure-ai-ml azure-identity
+        
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Submit Training Pipeline
+        id: train
+        run: |
+          python -c "
+          from azure.ai.ml import MLClient
+          from azure.identity import DefaultAzureCredential
+          from azure.ai.ml import Input
+          
+          # Import pipeline definition
+          from pipelines.training_pipeline import training_pipeline
+          
+          ml_client = MLClient(
+              DefaultAzureCredential(),
+              subscription_id='${{ secrets.AZURE_SUBSCRIPTION_ID }}',
+              resource_group_name='${{ env.AZURE_RESOURCE_GROUP }}',
+              workspace_name='${{ env.AZURE_ML_WORKSPACE }}'
+          )
+          
+          # Submit pipeline
+          pipeline_job = ml_client.jobs.create_or_update(
+              training_pipeline(
+                  raw_data=Input(type='uri_folder', path='azureml:training-data:latest'),
+                  model_name='${{ env.MODEL_NAME }}'
+              ),
+              experiment_name='ci-cd-training'
+          )
+          
+          # Wait for completion
+          ml_client.jobs.stream(pipeline_job.name)
+          
+          # Get model version
+          completed_job = ml_client.jobs.get(pipeline_job.name)
+          print(f'::set-output name=run_id::{pipeline_job.name}')
+          "
+
+  # ===========================================================================
+  # STAGE 3: Model Validation
+  # ===========================================================================
+  validate-model:
+    needs: train-model
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Validate Model Performance
+        run: |
+          python -c "
+          from azure.ai.ml import MLClient
+          from azure.identity import DefaultAzureCredential
+          
+          ml_client = MLClient(
+              DefaultAzureCredential(),
+              subscription_id='${{ secrets.AZURE_SUBSCRIPTION_ID }}',
+              resource_group_name='${{ env.AZURE_RESOURCE_GROUP }}',
+              workspace_name='${{ env.AZURE_ML_WORKSPACE }}'
+          )
+          
+          # Get latest model
+          model = ml_client.models.get(
+              name='${{ env.MODEL_NAME }}',
+              version='latest'
+          )
+          
+          # Check metrics threshold
+          accuracy = float(model.properties.get('accuracy', 0))
+          if accuracy < 0.9:
+              raise ValueError(f'Model accuracy {accuracy} below threshold 0.9')
+          
+          print(f'Model validated: accuracy={accuracy}')
+          "
+
+  # ===========================================================================
+  # STAGE 4: Deploy to Staging
+  # ===========================================================================
+  deploy-staging:
+    needs: validate-model
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Deploy to Staging Endpoint
+        run: |
+          az ml online-deployment create \
+            --name staging \
+            --endpoint classification-endpoint-staging \
+            --model azureml:${{ env.MODEL_NAME }}:latest \
+            --instance-type Standard_DS3_v2 \
+            --instance-count 1 \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ env.AZURE_ML_WORKSPACE }}
+            
+      - name: Run Integration Tests
+        run: |
+          python tests/integration/test_endpoint.py \
+            --endpoint classification-endpoint-staging
+
+  # ===========================================================================
+  # STAGE 5: Deploy to Production (Manual Approval Required)
+  # ===========================================================================
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    if: github.event.inputs.deploy_to_production == 'true' || github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Blue-Green Deployment
+        run: |
+          # Deploy to green slot
+          az ml online-deployment create \
+            --name green \
+            --endpoint classification-endpoint-prod \
+            --model azureml:${{ env.MODEL_NAME }}:latest \
+            --instance-type Standard_DS3_v2 \
+            --instance-count 2 \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ env.AZURE_ML_WORKSPACE }}
+          
+          # Gradually shift traffic (canary)
+          az ml online-endpoint update \
+            --name classification-endpoint-prod \
+            --traffic "blue=90 green=10" \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ env.AZURE_ML_WORKSPACE }}
+            
+      - name: Full Traffic Cutover
+        run: |
+          # After successful canary, shift all traffic
+          az ml online-endpoint update \
+            --name classification-endpoint-prod \
+            --traffic "green=100" \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ env.AZURE_ML_WORKSPACE }}
+          
+          # Delete old blue deployment
+          az ml online-deployment delete \
+            --name blue \
+            --endpoint classification-endpoint-prod \
+            --yes \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ env.AZURE_ML_WORKSPACE }}
+          
+          # Rename green to blue for next deployment
+          # (Note: In practice, you'd use a more sophisticated approach)

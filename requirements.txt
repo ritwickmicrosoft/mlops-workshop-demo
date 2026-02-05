@@ -1,0 +1,21 @@
+# Core Azure ML + auth
+azure-ai-ml
+azure-identity
+
+# Feature Store assets (FeatureStoreEntity / FeatureSet) are managed via azure-ai-ml
+
+# MLflow integration with Azure ML
+mlflow==2.16.2
+azureml-mlflow==1.60.0
+
+# Data + modeling
+numpy<2.0  # Pin to NumPy 1.x to match Azure ML sklearn-1.5 environment
+pandas
+scikit-learn
+
+# Notebook experience
+ipykernel
+
+# Azure management SDKs (used by governance/audit demos)
+azure-mgmt-monitor
+azure-mgmt-authorization

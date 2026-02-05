@@ -1,0 +1,51 @@
+$schema: https://azuremlschemas.azureedge.net/latest/feature_set_specification.schema.json
+source:
+  type: parquet
+  path: azureml://datastores/workspaceblobstore/paths/features/document_features/
+  timestamp_column:
+    name: event_timestamp
+
+index_columns:
+  - name: document_id
+    type: string
+entity:
+  - name: document
+    version: "1"
+    keys:
+      - document_id
+features:
+  - name: word_count
+    type: integer
+    description: Total word count in document
+
+  - name: char_count
+    type: integer
+    description: Total character count in document
+
+  - name: page_count
+    type: integer
+    description: Number of pages in document
+
+  - name: has_tables
+    type: boolean
+    description: Whether document contains tables
+
+  - name: has_images
+    type: boolean
+    description: Whether document contains images
+
+  - name: pii_score
+    type: float
+    description: PII detection confidence score (0-1)
+
+  - name: language_detected
+    type: string
+    description: Detected primary language
+
+  - name: classification_confidence
+    type: float
+    description: Previous classification confidence score
+
+  - name: days_since_creation
+    type: integer
+    description: Days since document was created
