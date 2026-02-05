@@ -1,120 +1,128 @@
-# DND/CAF MLOps Hackathon Demo
+# MLOps Workshop Demo
 
-## 🎯 Overview
-This repository contains hands-on demos for the MLOps hackathon covering:
-1. **Automated Retraining** - Event-driven pipeline triggers
-2. **Observability** - Model monitoring dashboards
-3. **Governance** - Audit trails and lineage
-4. **Feature Stores** - Shared feature management
+End-to-end Azure ML + MLflow hands-on workshop demonstrating production MLOps patterns.
+
+## 🎯 What You'll Learn
+
+| Module | Topic | Time |
+|--------|-------|------|
+| 1 | Environment Setup | 10 min |
+| 2 | Train & Track with MLflow | 15 min |
+| 3 | Batch Endpoint Deployment | 10 min |
+| 4 | Automated Retraining Pipeline | 10 min |
+| 5 | Drift Detection (Observability) | 10 min |
+| 6 | Governance & Audit Logging | 5 min |
 
 ## 📁 Project Structure
-```
-├── 01-automated-retraining/      # Automated retraining demo (Azure ML pipeline skeleton)
-├── 02-observability/             # Monitoring and dashboards setup examples
-├── 03-governance/                # Audit logging and governance examples
-├── 04-feature-store/             # Feature store setup examples
-├── infra/                        # Infrastructure as Code (Bicep)
-└── notebooks/                    # Hands-on notebooks
-```
 
-## 🔧 Azure Resources Used
-| Resource | Purpose |
-|----------|---------|
-| Azure Machine Learning | ML workspace, pipelines, model registry |
-| Azure Data Factory | Data pipelines, triggers |
-| Azure Event Grid | Event-driven automation |
-| Azure Monitor | Observability and dashboards |
-| Application Insights | Endpoint monitoring |
-| Azure Key Vault | Secrets management |
-| Azure Container Registry | Docker images |
-| Azure ML Feature Store | Shared feature management |
+```
+├── notebooks/
+│   └── 01_azure_ml_mlflow_quickstart.ipynb   # Main workshop notebook
+├── 01-automated-retraining/                   # Retraining pipeline
+│   ├── pipeline.py                            # Azure ML pipeline definition
+│   ├── submit_pipeline.py                     # Submit pipeline job
+│   └── components/                            # Pipeline steps
+├── 02-observability/                          # Drift detection
+│   ├── drift_report.py                        # PSI/JSD drift metrics
+│   └── submit_drift_job.py                    # Submit drift job
+├── 03-governance/                             # Audit & compliance
+│   ├── audit_logging.py                       # Azure Activity Log queries
+│   └── run_audit_report.py                    # Generate audit report
+├── 04-feature-store/                          # Feature store assets
+├── infra/                                     # Bicep templates
+├── MLOps_Workshop_Playbook.html               # Interactive workshop guide
+└── requirements.txt                           # Python dependencies
+```
 
 ## 🚀 Quick Start
 
-For a single-page, end-to-end, presentation-friendly guide, open:
-- [MLOps_Hackathon_Guide.html](MLOps_Hackathon_Guide.html)
-
 ### Prerequisites
-- Azure Subscription with Contributor access
-- Azure CLI installed
-- Python 3.9+
-- VS Code with Azure ML extension
+- Azure subscription with Contributor access
+- Python 3.9+ 
+- VS Code with Python & Jupyter extensions
+- Azure CLI (`az login`)
 
-### 1. Clone and Setup
-```bash
-# Clone the repository
-git clone <repo-url>
-cd <repo-folder>
+### 1. Setup Environment
 
-# Create Python environment
-python -m venv .venv
-.venv\Scripts\activate  # Windows
+```powershell
+# Clone repo
+git clone https://github.com/ritwickmicrosoft/mlops-workshop-demo.git
+cd mlops-workshop-demo
+
+# Create virtual environment
+python -m venv .venv311
+.venv311\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-### 2. Configure Azure Settings (for notebooks)
+### 2. Configure Azure
 
-The notebook [notebooks/01_azure_ml_mlflow_quickstart.ipynb](notebooks/01_azure_ml_mlflow_quickstart.ipynb) reads configuration from environment variables:
-
-- `AZURE_SUBSCRIPTION_ID`
-- `AZURE_RESOURCE_GROUP` (default: `rg-dnd-mlops-demo`)
-- `AZURE_ML_WORKSPACE` (default: `mlw-dndmlops-dev`)
-- `AZURE_FEATURE_STORE_WORKSPACE` (default: `fs-dndmlops-dev`, for Feature Store demos)
-
-PowerShell example:
 ```powershell
-$env:AZURE_SUBSCRIPTION_ID = "<subscription-id>"
-$env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
-$env:AZURE_ML_WORKSPACE = "mlw-dndmlops-dev"
-```
-
-### 3. Deploy Infrastructure
-```bash
-# Login to Azure
 az login
-
-# Deploy resources
-az deployment group create \
-  --resource-group rg-dnd-mlops-demo \
-  --template-file infra/main.bicep
+$env:AZURE_SUBSCRIPTION_ID = "<your-subscription-id>"
+$env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
+$env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
 ```
 
-### 4. Run the Demos
+### 3. Run the Workshop
 
-- Start with [notebooks/01_azure_ml_mlflow_quickstart.ipynb](notebooks/01_azure_ml_mlflow_quickstart.ipynb)
-- Run automated retraining:
-  - [01-automated-retraining/submit_pipeline.py](01-automated-retraining/submit_pipeline.py)
-  - [01-automated-retraining/simulate_event_trigger.py](01-automated-retraining/simulate_event_trigger.py)
-- Run observability drift/quality job:
-  - [02-observability/submit_drift_job.py](02-observability/submit_drift_job.py)
-- Run governance audit report:
-  - [03-governance/run_audit_report.py](03-governance/run_audit_report.py)
-- Follow the numbered folders in order for the remaining hackathon exercises.
+**Option A: Interactive Playbook** (recommended)
+- Open `MLOps_Workshop_Playbook.html` in your browser
+- Follow the step-by-step guide with checkboxes
 
-## 📚 Hackathon Agenda
+**Option B: Notebook Only**
+- Open `notebooks/01_azure_ml_mlflow_quickstart.ipynb`
+- Run cells sequentially
 
-### Day 1: Foundations & Automated Retraining
-| Time | Topic |
-|------|-------|
-| 09:00-10:00 | MLOps Overview & Azure ML Setup |
-| 10:00-12:00 | Hands-on: MLflow Integration |
-| 13:00-15:00 | Hands-on: Automated Retraining Pipeline |
-| 15:00-17:00 | CI/CD with GitHub Actions / Azure DevOps |
+## ⚠️ Known Issues & Fixes
 
-### Day 2: Observability & Governance
-| Time | Topic |
-|------|-------|
-| 09:00-11:00 | Hands-on: Model Monitoring Setup |
-| 11:00-12:00 | Building Dashboards |
-| 13:00-15:00 | Hands-on: Feature Store |
-| 15:00-17:00 | Governance, RBAC & Audit Logs |
+### NumPy 2.x Compatibility
+MLflow models logged with NumPy 2.x fail on Azure ML endpoints (which use NumPy 1.x).
 
-## 🔗 Useful Links
-- [Azure ML Documentation](https://docs.microsoft.com/azure/machine-learning/)
-- [MLflow on Azure ML](https://docs.microsoft.com/azure/machine-learning/how-to-use-mlflow)
-- [Azure ML Feature Store](https://docs.microsoft.com/azure/machine-learning/concept-what-is-managed-feature-store)
-- [Azure ML Model Monitoring](https://docs.microsoft.com/azure/machine-learning/how-to-monitor-model-performance)
+**Fix:** Re-log the model with explicit pip requirements:
+```python
+mlflow.sklearn.log_model(
+    model,
+    artifact_path='model',
+    pip_requirements=['numpy<2.0', 'scikit-learn>=1.0,<2.0', 'mlflow'],
+)
+```
 
-## 👥 Contact
-- **Iliana Meco** - Cloud Solution Architect - ilianameco@microsoft.com
-- **Ritwick Dutta** - AI Cloud Solution Architect
+See notebook cells 11-12 for the complete fix.
+
+## 📊 Key Metrics
+
+### Drift Detection (Module 5)
+| Metric | Low Risk | Medium | High Risk |
+|--------|----------|--------|-----------|
+| **PSI** (Population Stability Index) | < 0.1 | 0.1-0.25 | > 0.25 |
+| **JSD** (Jensen-Shannon Divergence) | < 0.05 | 0.05-0.1 | > 0.1 |
+
+## 🔧 Azure Resources
+
+| Resource | Purpose |
+|----------|---------|
+| Azure ML Workspace | Experiments, models, endpoints |
+| Compute Cluster (cpu-cluster) | Training & batch jobs |
+| Model Registry | Versioned model storage |
+| Batch Endpoint | Asynchronous inference |
+
+## 📚 References
+
+- [Azure ML Documentation](https://learn.microsoft.com/azure/machine-learning/)
+- [MLflow with Azure ML](https://learn.microsoft.com/azure/machine-learning/how-to-use-mlflow-cli-runs)
+- [Batch Endpoints](https://learn.microsoft.com/azure/machine-learning/concept-endpoints-batch)
+
+## 🧹 Cleanup
+
+```powershell
+# Delete batch endpoint
+az ml batch-endpoint delete -n spam-batch-* -g $env:AZURE_RESOURCE_GROUP -w $env:AZURE_ML_WORKSPACE --yes
+
+# Delete online endpoint (if created)
+az ml online-endpoint delete -n spam-clf-* -g $env:AZURE_RESOURCE_GROUP -w $env:AZURE_ML_WORKSPACE --yes
+```
+
+---
+
+**Workshop Playbook:** Open `MLOps_Workshop_Playbook.html` for the full interactive guide.
