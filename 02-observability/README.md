@@ -1,62 +1,54 @@
-# Observability & Model Monitoring
+# Observability — Drift Detection & Data Quality
 
-This module demonstrates how to set up dashboards for model performance and data health.
+This module computes data drift and data quality metrics between a baseline (training) dataset and a simulated production dataset, logs them to MLflow, and generates an interactive HTML report.
 
-## Azure ML Model Monitoring Features
+## What It Does
 
-### 1. Data Drift Detection
-Monitors statistical changes in input features over time.
+1. **`drift_report.py`** — Runs as an Azure ML job (or locally). Computes:
+   - **PSI** (Population Stability Index) — measures distribution shift per feature
+   - **JSD** (Jensen-Shannon Divergence) — symmetric distance between distributions
+   - **Null rates** — baseline vs production data quality
+   - Outputs `drift_output.json` + logs metrics to MLflow
 
-### 2. Prediction Drift
-Monitors changes in model prediction distributions.
+2. **`submit_drift_job.py`** — Submits `drift_report.py` as an Azure ML command job on `cpu-cluster` using the `sklearn-1.5` curated environment.
 
-### 3. Data Quality
-Monitors for null values, out-of-range values, and type mismatches.
+3. **`generate_html_report.py`** — Converts the drift JSON into a standalone `Observability_Report.html` with:
+   - Overall risk banner (Low / Medium / High)
+   - Aggregate drift gauges (PSI mean/p95, JSD mean/p95)
+   - Per-feature drift table sorted by PSI with risk badges
+   - Data quality summary (null rates, column counts)
+   - Interpretation guide with threshold definitions
 
-### 4. Feature Attribution Drift
-Monitors changes in feature importance.
+## Quick Start
 
-## Architecture
+```powershell
+# 1. Submit the drift job to Azure ML
+python .\02-observability\submit_drift_job.py
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     Observability Stack                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐             │
-│  │ Model       │    │ Application │    │ Azure       │             │
-│  │ Endpoint    │───►│ Insights    │───►│ Monitor     │             │
-│  └─────────────┘    └─────────────┘    └─────────────┘             │
-│         │                                     │                      │
-│         ▼                                     ▼                      │
-│  ┌─────────────┐                      ┌─────────────┐              │
-│  │ Azure ML    │                      │ Power BI /  │              │
-│  │ Monitoring  │─────────────────────►│ Workbooks   │              │
-│  └─────────────┘                      └─────────────┘              │
-│                                                                      │
-└─────────────────────────────────────────────────────────────────────┘
+# 2. After job completes, download the JSON artifact from Azure ML Studio
+#    (Jobs → observability → <job> → Outputs + logs → report)
+
+# 3. Generate the HTML report locally
+python .\02-observability\generate_html_report.py --json_path <path-to-drift_output.json>
+
+# 4. Open Observability_Report.html in your browser
 ```
 
-## Metrics to Monitor
+## Risk Thresholds
 
-| Category | Metrics |
-|----------|---------|
-| **Data Drift** | Jensen-Shannon distance, Population Stability Index |
-| **Model Performance** | Accuracy, Precision, Recall, F1, AUC |
-| **Operational** | Latency, Throughput, Error Rate, 5xx/4xx |
-| **Data Quality** | Null rate, Out-of-range rate, Type errors |
+| Metric | Low Risk | Medium | High Risk |
+|--------|----------|--------|-----------|
+| **PSI** | < 0.1 | 0.1–0.25 | > 0.25 |
+| **JSD** | < 0.05 | 0.05–0.1 | > 0.1 |
 
-## Alerting Strategy
+## Where to See Results
 
-| Alert Level | Condition | Action |
-|-------------|-----------|--------|
-| **Warning** | Drift score > 0.1 | Email notification |
-| **Critical** | Drift score > 0.3 | Trigger retraining |
-| **Severe** | Model accuracy < threshold | Rollback + alert |
+- **Azure ML Studio** → Jobs → `observability` experiment → Select job → **Metrics** tab (PSI/JSD/null rates)
+- **Locally** → Open `Observability_Report.html` in any browser
 
-## Hands-On Exercises
+## Other Files
 
-1. **Exercise 1**: Enable model monitoring
-2. **Exercise 2**: Create custom metrics with App Insights
-3. **Exercise 3**: Build Azure Monitor Workbook dashboard
-4. **Exercise 4**: Set up alerts and action groups
+| File | Purpose |
+|------|---------|
+| `monitoring_setup.py` | Helper for Azure Monitor integration |
+| `azure_monitor_queries.kql` | Log Analytics KQL queries for ML operations |

@@ -119,7 +119,6 @@
     <div class="module-header">
       <span class="module-number">1</span>
       <span class="module-title">Environment Setup</span>
-      <span class="module-time">10 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
@@ -148,7 +147,6 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
     <div class="module-header">
       <span class="module-number">2</span>
       <span class="module-title">Train & Track with MLflow</span>
-      <span class="module-time">15 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
@@ -183,7 +181,6 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
     <div class="module-header">
       <span class="module-number">3</span>
       <span class="module-title">Batch Endpoint</span>
-      <span class="module-time">10 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
@@ -208,7 +205,6 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
     <div class="module-header">
       <span class="module-number">4</span>
       <span class="module-title">Automated Retraining Pipeline</span>
-      <span class="module-time">10 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
@@ -234,7 +230,6 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
     <div class="module-header">
       <span class="module-number">5</span>
       <span class="module-title">Observability: Drift Detection</span>
-      <span class="module-time">10 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
@@ -250,13 +245,22 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
         <div class="step-desc">Experiments → observability → Drift + Quality Report → Metrics tab</div>
       </div>
     </div>
+    <div class="step">
+      <div class="step-check" onclick="toggleCheck(this)"></div>
+      <div class="step-content">
+        <div class="step-title">Generate HTML observability report</div>
+        <div class="step-desc">Download the drift JSON artifact from the completed job, then run:</div>
+        <pre>python .\02-observability\generate_html_report.py --json_path &lt;drift_output.json&gt;</pre>
+        <div class="step-desc">Opens <code>Observability_Report.html</code> with drift gauges, per-feature risk table, and data quality summary.</div>
+      </div>
+    </div>
     <div class="note note-demo">
       <strong>Metrics:</strong><br>
       • <code>psi_mean</code>: Population Stability Index (&lt;0.1 = no drift)<br>
       • <code>jsd_mean</code>: Jensen-Shannon Divergence (near 0 = similar distributions)<br>
       • <code>null_rate</code>: Data quality check
     </div>
-    <div class="note note-success">Drift job completes with metrics logged.</div>
+    <div class="note note-success">Drift job completes with metrics logged. <code>Observability_Report.html</code> shows risk badges and per-feature drift.</div>
   </section>
 
   <!-- Module 6 -->
@@ -264,23 +268,23 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
     <div class="module-header">
       <span class="module-number">6</span>
       <span class="module-title">Governance: Audit Report</span>
-      <span class="module-time">5 min</span>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
       <div class="step-content">
-        <div class="step-title">Generate audit report</div>
+        <div class="step-title">Generate audit report (JSON + HTML)</div>
         <pre>python .\03-governance\run_audit_report.py</pre>
+        <div class="step-desc">Produces <code>audit_report.json</code> and <code>Governance_Report.html</code> automatically.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-check" onclick="toggleCheck(this)"></div>
       <div class="step-content">
-        <div class="step-title">Review audit_report.json</div>
-        <div class="step-desc">Model registrations, deployments, active endpoints (last 7 days)</div>
+        <div class="step-title">Review Governance_Report.html</div>
+        <div class="step-desc">Open the HTML report in a browser — model registry inventory, endpoint status, deployment &amp; registration audit trails, compliance notes.</div>
       </div>
     </div>
-    <div class="note note-success"><code>audit_report.json</code> generated with ML asset inventory.</div>
+    <div class="note note-success"><code>Governance_Report.html</code> generated with ML asset inventory and audit trail.</div>
   </section>
 
   <!-- Wrap-up -->

@@ -1,6 +1,40 @@
 # Governance & Audit
 
-This module demonstrates governance, RBAC, and audit logging for ML deployments.
+This module generates compliance reports showing model inventory, deployment events, and audit trails from Azure Activity Log. Outputs both JSON and an interactive HTML report.
+
+## What It Does
+
+1. **`audit_logging.py`** — Core library that:
+   - Queries Azure Activity Log for deployment & model registration events
+   - Inventories all registered models (name, version, tags)
+   - Lists active endpoints and their provisioning state
+   - Supports model registration with governance metadata (author, approver, data version, compliance tags)
+
+2. **`run_audit_report.py`** — Runner script that calls `audit_logging.py` and outputs:
+   - `audit_report.json` — machine-readable audit data
+   - `Governance_Report.html` — interactive HTML report (auto-generated)
+
+3. **`generate_html_report.py`** — Converts audit JSON into a standalone `Governance_Report.html` with:
+   - Summary cards (model count, endpoint count, event counts)
+   - Model registry inventory table
+   - Active endpoints with status badges
+   - Deployment and registration audit trails
+   - Compliance notes
+
+## Quick Start
+
+```powershell
+# Set env vars
+$env:AZURE_SUBSCRIPTION_ID = "<your-sub>"
+$env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
+$env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
+
+# Generate the report (JSON + HTML)
+python .\03-governance\run_audit_report.py
+
+# Open the HTML report
+start .\03-governance\Governance_Report.html
+```
 
 ## Key Governance Questions Answered
 
@@ -114,9 +148,9 @@ model = Model(
 )
 ```
 
-## Hands-On Exercises
+## Hands-On Steps
 
-1. **Exercise 1**: Set up RBAC roles for MLOps team
-2. **Exercise 2**: Configure diagnostic settings for audit logs
-3. **Exercise 3**: Query audit logs with Log Analytics (KQL)
-4. **Exercise 4**: Create governance dashboard in Power BI
+1. Run `python .\03-governance\run_audit_report.py` to generate the audit report
+2. Open `Governance_Report.html` in a browser and review the model inventory
+3. Check deployment and registration audit trails for WHO/WHAT/WHEN
+4. Review compliance notes and RBAC guidance

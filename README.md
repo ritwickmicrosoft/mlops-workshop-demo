@@ -21,24 +21,31 @@ End-to-end Azure ML + MLflow hands-on workshop demonstrating production MLOps pa
 ├── 01-automated-retraining/                   # Retraining pipeline
 │   ├── pipeline.py                            # Azure ML pipeline definition
 │   ├── submit_pipeline.py                     # Submit pipeline job
-│   └── components/                            # Pipeline steps
-├── 02-observability/                          # Drift detection
-│   ├── drift_report.py                        # PSI/JSD drift metrics
-│   └── submit_drift_job.py                    # Submit drift job
+│   ├── simulate_event_trigger.py              # Event-driven retrain demo
+│   └── components/                            # Pipeline steps (prep/train/evaluate/register)
+├── 02-observability/                          # Drift detection & data quality
+│   ├── drift_report.py                        # PSI/JSD drift metrics (runs as Azure ML job)
+│   ├── submit_drift_job.py                    # Submit drift job to Azure ML
+│   ├── generate_html_report.py                # Generate Observability_Report.html from JSON
+│   ├── monitoring_setup.py                    # Azure Monitor integration helpers
+│   └── azure_monitor_queries.kql              # Log Analytics KQL queries
 ├── 03-governance/                             # Audit & compliance
-│   ├── audit_logging.py                       # Azure Activity Log queries
-│   └── run_audit_report.py                    # Generate audit report
-├── 04-feature-store/                          # Feature store assets
-├── infra/                                     # Bicep templates
+│   ├── audit_logging.py                       # Azure Activity Log queries + model inventory
+│   ├── run_audit_report.py                    # Generate audit_report.json + Governance_Report.html
+│   └── generate_html_report.py                # Generate Governance_Report.html from JSON
+├── 04-feature-store/                          # Feature store assets (advanced)
+├── infra/                                     # Bicep templates (with RBAC role assignments)
+│   ├── main.bicep                             # Core infra (ML workspace, storage, KV, ACR, compute)
+│   └── feature_store.bicep                    # Feature store workspace
 ├── MLOps_Workshop_Playbook.html               # Interactive workshop guide
-└── requirements.txt                           # Python dependencies
+└── requirements.txt                           # Pinned Python dependencies
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Azure subscription with Contributor access
-- Python 3.9+ 
+- Python 3.11.x recommended (tested with `.venv311`; 3.9+ may work)
 - VS Code with Python & Jupyter extensions
 - Azure CLI (`az login`)
 
@@ -93,10 +100,27 @@ See notebook cells 11-12 for the complete fix.
 ## 📊 Key Metrics
 
 ### Drift Detection (Module 5)
+
+Run the drift job and generate an HTML report:
+```powershell
+python .\02-observability\submit_drift_job.py        # Submit to Azure ML
+# After job completes, download the JSON artifact, then:
+python .\02-observability\generate_html_report.py --json_path <drift_output.json>
+# Opens Observability_Report.html with drift gauges, per-feature table, risk badges
+```
+
 | Metric | Low Risk | Medium | High Risk |
-|--------|----------|--------|-----------|
+|--------|----------|--------|----------|
 | **PSI** (Population Stability Index) | < 0.1 | 0.1-0.25 | > 0.25 |
 | **JSD** (Jensen-Shannon Divergence) | < 0.05 | 0.05-0.1 | > 0.1 |
+
+### Governance & Audit (Module 6)
+
+Run the audit report (generates both JSON and HTML automatically):
+```powershell
+python .\03-governance\run_audit_report.py
+# Produces audit_report.json + Governance_Report.html
+```
 
 ## 🔧 Azure Resources
 
