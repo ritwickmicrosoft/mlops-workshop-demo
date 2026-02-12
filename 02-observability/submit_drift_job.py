@@ -7,7 +7,7 @@ This avoids preview monitoring APIs and still lets you demo observability:
 Usage (PowerShell):
   $env:AZURE_SUBSCRIPTION_ID = "..."
   $env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
-  $env:AZURE_ML_WORKSPACE = "mlw-dndmlops-dev"
+  $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
     python ./02-observability/submit_drift_job.py
 """
 
@@ -23,7 +23,7 @@ from azure.identity import DefaultAzureCredential
 def main() -> None:
     sub = os.getenv("AZURE_SUBSCRIPTION_ID", "").strip()
     rg = os.getenv("AZURE_RESOURCE_GROUP", "rg-dnd-mlops-demo").strip()
-    ws = os.getenv("AZURE_ML_WORKSPACE", "mlw-dndmlops-dev").strip()
+    ws = os.getenv("AZURE_ML_WORKSPACE", "mlw-dndmlops2-dev").strip()
 
     if not sub:
         raise ValueError("Missing AZURE_SUBSCRIPTION_ID")

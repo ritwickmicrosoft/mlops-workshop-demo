@@ -11,7 +11,7 @@ For a reliable workshop demo, use the supported path implemented in:
 Run (PowerShell):
     $env:AZURE_SUBSCRIPTION_ID = "..."
     $env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
-    $env:AZURE_ML_WORKSPACE = "mlw-dndmlops-dev"
+    $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
     python ./02-observability/submit_drift_job.py
 """
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Governance &amp; Audit Report</title>
+<style>
+  :root { --bg: #f8f9fa; --card: #ffffff; --border: #dee2e6; --text: #212529; --muted: #6c757d; --accent: #0d6efd; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); padding:24px; }
+  h1 { font-size:1.6em; margin-bottom:4px; }
+  .subtitle { color:var(--muted); margin-bottom:20px; font-size:0.9em; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:20px; }
+  .card h2 { font-size:1.15em; margin-bottom:12px; border-bottom:2px solid var(--border); padding-bottom:6px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; }
+  .stat { text-align:center; padding:16px; background:#f1f3f5; border-radius:8px; }
+  .stat .val { font-size:2em; font-weight:700; color:var(--accent); }
+  .stat .lbl { font-size:0.85em; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th, td { padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; }
+  th { background:#f1f3f5; font-weight:600; position:sticky; top:0; }
+  tbody tr:hover { background:#f8f9fa; }
+  .scroll-table { max-height:400px; overflow-y:auto; }
+  .empty { text-align:center; padding:24px; color:var(--muted); font-style:italic; }
+  .meta-table { font-size:0.85em; }
+  .meta-table td:first-child { font-weight:600; width:160px; color:var(--muted); }
+  @media print { body { padding:10px; } .card { break-inside:avoid; } }
+</style>
+</head>
+<body>
+
+<h1>🛡️ Governance &amp; Audit Report</h1>
+<div class="subtitle">Generated: 2026-02-12T04:40:18.767834 &nbsp;|&nbsp; Audit Period: 7 days</div>
+
+<!-- Report Metadata -->
+<div class="card">
+  <h2>Report Details</h2>
+  <table class="meta-table">
+    <tr><td>Workspace</td><td>mlw-dndmlops2-dev</td></tr>
+    <tr><td>Resource Group</td><td>rg-dnd-mlops-demo</td></tr>
+    <tr><td>Audit Period</td><td>7 days</td></tr>
+    <tr><td>Generated At</td><td>2026-02-12T04:40:18.767834</td></tr>
+  </table>
+</div>
+
+<!-- Summary -->
+<div class="card">
+  <h2>Summary</h2>
+  <div class="grid">
+    <div class="stat"><div class="val">6</div><div class="lbl">Registered Models</div></div>
+    <div class="stat"><div class="val">1</div><div class="lbl">Active Endpoints</div></div>
+    <div class="stat"><div class="val">0</div><div class="lbl">Deployment Events</div></div>
+    <div class="stat"><div class="val">0</div><div class="lbl">Registration Events</div></div>
+  </div>
+</div>
+
+<!-- Registered Models -->
+<div class="card">
+  <h2>Model Registry Inventory (6 models)</h2>
+  <div class='scroll-table'><table><thead><tr><th>Model Name</th><th style='text-align:center;'>Version</th><th>Created</th><th>Tags</th></tr></thead><tbody>
+        <tr>
+          <td>azureml_89373ff5-c67f-4b77-8187-da22b5070205_output_mlflow_log_model_462019809</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-03T18:43:19</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr>
+        <tr>
+          <td>spam-classifier</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-03T18:43:23</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr>
+        <tr>
+          <td>azureml_85efa465-51c5-42cb-befa-1e667f0aa246_output_mlflow_log_model_1059246078</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-04T18:29:42</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr>
+        <tr>
+          <td>azureml_6cab43f8-6e4b-4d2b-9aaa-a3be6c084287_output_mlflow_log_model_680779636</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-04T19:42:05</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr>
+        <tr>
+          <td>azureml_fa046904-ce27-4847-a34a-03e82f662cd4_output_mlflow_log_model_1623914312</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-05T02:49:38</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr>
+        <tr>
+          <td>azureml_1f529eaf-a62c-4dab-aa07-31ccb16d440a_output_model</td>
+          <td style="text-align:center;">None</td>
+          <td>2026-02-05T04:16:50</td>
+          <td style="font-size:0.8em;">—</td>
+        </tr></tbody></table></div>
+</div>
+
+<!-- Active Endpoints -->
+<div class="card">
+  <h2>Active Endpoints (1)</h2>
+  <div class='scroll-table'><table><thead><tr><th>Endpoint Name</th><th style='text-align:center;'>Status</th><th>Created</th></tr></thead><tbody>
+        <tr>
+          <td>spam-clf-de533f51</td>
+          <td style="text-align:center;"><span style="background:#27ae60;color:#fff;padding:2px 10px;border-radius:12px;font-size:0.82em;">Succeeded</span></td>
+          <td>—</td>
+        </tr></tbody></table></div>
+</div>
+
+<!-- Deployment Audit Trail -->
+<div class="card">
+  <h2>Deployment Audit Trail (0 events)</h2>
+  <div class='empty'>No deployment events found in the audit period.</div>
+</div>
+
+<!-- Model Registration Audit Trail -->
+<div class="card">
+  <h2>Model Registration Audit Trail (0 events)</h2>
+  <div class='empty'>No model registration events captured via Activity Log. Note: SDK-based registrations may not appear in Activity Log — check the Model Registry Inventory above.</div>
+</div>
+
+<!-- Compliance Notes -->
+<div class="card">
+  <h2>Compliance Notes</h2>
+  <ul style="padding-left:20px;font-size:0.9em;line-height:1.8;">
+    <li><strong>Activity Log Source:</strong> Azure Monitor Activity Logs (Azure Resource Manager operations)</li>
+    <li><strong>SDK-based model registrations</strong> may not generate Activity Log entries — verify via the Model Registry Inventory section above</li>
+    <li><strong>Retention:</strong> Activity Logs default to 90 days; configure Log Analytics for longer retention</li>
+    <li><strong>RBAC:</strong> Ensure Key Vault uses RBAC authorization (<code>enableRbacAuthorization: true</code>) for auditability</li>
+    <li><strong>Diagnostic Settings:</strong> Must be enabled on the ML workspace for audit log capture (see <code>infra/main.bicep</code>)</li>
+  </ul>
+</div>
+
+</body>
+</html>

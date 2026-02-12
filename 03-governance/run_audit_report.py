@@ -5,7 +5,7 @@ This wraps `audit_logging.generate_audit_report()` and prints quick links.
 Usage (PowerShell):
   $env:AZURE_SUBSCRIPTION_ID = "..."
   $env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
-  $env:AZURE_ML_WORKSPACE = "mlw-dndmlops-dev"
+  $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
   python .\03-governance\run_audit_report.py
 """
 

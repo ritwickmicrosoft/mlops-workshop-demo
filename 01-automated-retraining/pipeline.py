@@ -15,7 +15,7 @@ from azure.identity import DefaultAzureCredential
 
 SUBSCRIPTION_ID = os.getenv("AZURE_SUBSCRIPTION_ID")
 RESOURCE_GROUP = os.getenv("AZURE_RESOURCE_GROUP", "rg-dnd-mlops-demo")
-WORKSPACE_NAME = os.getenv("AZURE_ML_WORKSPACE", "mlw-dndmlops-dev")
+WORKSPACE_NAME = os.getenv("AZURE_ML_WORKSPACE", "mlw-dndmlops2-dev")
 
 THIS_DIR = Path(__file__).resolve().parent
 COMPONENTS_DIR = THIS_DIR / "components"
