@@ -25,6 +25,9 @@ batch_endpoint_input.csv
 batch_scoring/
 _staging/
 audit_report.json
+Observability_Report.html
+Governance_Report.html
+*.drift_output.json
 temp_logs/
 
 # VS Code

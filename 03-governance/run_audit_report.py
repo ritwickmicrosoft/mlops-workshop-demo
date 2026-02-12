@@ -32,6 +32,14 @@ def main() -> None:
     print("Registered models:", len(report["sections"].get("registered_models", [])))
     print("Active endpoints:", len(report["sections"].get("active_endpoints", [])))
 
+    # Auto-generate HTML report alongside the JSON
+    try:
+        from generate_html_report import generate_html
+        html_path = out.with_suffix(".html")
+        generate_html(report, html_path)
+    except Exception as e:
+        print(f"[WARN] Could not generate HTML report: {e}")
+
 
 if __name__ == "__main__":
     main()
