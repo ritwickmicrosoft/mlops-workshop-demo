@@ -25,6 +25,7 @@ batch_endpoint_input.csv
 batch_scoring/
 _staging/
 audit_report.json
+audit_report.html
 Observability_Report.html
 Governance_Report.html
 *.drift_output.json

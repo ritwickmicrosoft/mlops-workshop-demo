@@ -1,6 +1,11 @@
 """
-Azure ML Managed Feature Store Setup
-Demonstrates: Feature definition, materialization, and serving
+Azure ML Managed Feature Store Setup  (REFERENCE ONLY — not directly runnable)
+
+Demonstrates: Feature definition, materialization, and serving.
+
+This file is a teaching aid that shows end-to-end Feature Store patterns.
+For the actual runnable workshop script, use:
+    python .\04-feature-store\register_feature_assets.py
 """
 
 from azure.ai.ml import MLClient

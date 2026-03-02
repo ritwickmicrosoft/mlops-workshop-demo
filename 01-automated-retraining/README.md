@@ -43,6 +43,13 @@ This module demonstrates how to set up automated model retraining when data chan
 4. **Exercise 4**: Set up approval gates
 
 ## Files in This Module
-- `pipeline.py` - Azure ML Pipeline definition (skeleton)
 
-Note: this demo repo currently contains the pipeline definition only (no `trigger_function/` or `components/` folders).
+| File | Purpose |
+|------|---------|
+| `pipeline.py` | Azure ML Pipeline definition with 4-step DAG |
+| `submit_pipeline.py` | Submit the pipeline job to Azure ML |
+| `simulate_event_trigger.py` | Simulate an event-driven retrain (adds noise) |
+| `components/data_prep/prep.py` | Fetch & preprocess OpenML Spambase |
+| `components/train/train.py` | Train RandomForest with MLflow tracking |
+| `components/evaluate/evaluate.py` | Compare new model against accuracy threshold |
+| `components/register/register.py` | Register model if evaluation passes |
