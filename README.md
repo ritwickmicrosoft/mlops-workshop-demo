@@ -2,6 +2,10 @@
 
 End-to-end Azure ML + MLflow hands-on workshop demonstrating production MLOps patterns.
 
+## 📦 Dataset
+
+This workshop uses the [Spam Emails Dataset](https://www.kaggle.com/datasets/yasserh/spamemailsdataset?resource=download) from Kaggle (UCI Spambase). The dataset is fetched automatically via OpenML at runtime — no manual download required.
+
 ## 🎯 What You'll Learn
 
 | Module | Topic | Key Concepts | Azure Services | Difficulty |
