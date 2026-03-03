@@ -75,7 +75,58 @@ $env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
 $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"
 ```
 
-### 3. Run the Workshop
+### 3. Deploy Azure Infrastructure (Bicep)
+
+You don't “install” `.bicep` files locally — you deploy them to Azure. The only local prerequisite is that your machine has Azure CLI with the Bicep tooling available.
+
+#### Prereqs (one-time)
+
+```powershell
+# Ensure Azure CLI is installed, then ensure Bicep is available
+az bicep version
+
+# If Bicep isn't installed yet
+az bicep install
+```
+
+#### Create resource group (if needed)
+
+```powershell
+az account set --subscription $env:AZURE_SUBSCRIPTION_ID
+az group create -n $env:AZURE_RESOURCE_GROUP -l <your-region>
+```
+
+#### (Optional) Grant yourself workshop RBAC automatically
+
+`infra/main.bicep` can optionally assign the **AzureML Data Scientist** role to the workshop user (to reduce manual Portal steps). To enable it, pass your Entra ID **principal id**:
+
+```powershell
+$workshopUserPrincipalId = az ad signed-in-user show --query id -o tsv
+```
+
+If `az ad signed-in-user show` isn't available in your tenant, you can skip this and assign access later.
+
+#### Deploy core workshop infra
+
+This creates the Azure ML workspace + required dependencies (Storage, Key Vault, ACR, App Insights/Log Analytics, compute cluster) and sets up role assignments/diagnostics.
+
+```powershell
+az deployment group create --resource-group $env:AZURE_RESOURCE_GROUP --template-file .\infra\main.bicep --parameters baseName=dndmlops environment=dev workshopUserPrincipalId=$workshopUserPrincipalId
+```
+
+#### (Optional / advanced) Deploy Feature Store workspace
+
+Deploy this only if you're doing the Feature Store module. This template assumes the core infra above is already deployed in the same resource group.
+
+```powershell
+az deployment group create --resource-group $env:AZURE_RESOURCE_GROUP --template-file .\infra\feature_store.bicep --parameters baseName=dndmlops environment=dev
+```
+
+#### Common issue: role assignment permissions
+
+If the deployment fails creating role assignments, your deploying identity may need **Owner** or **User Access Administrator** on the subscription/resource group (Contributor alone is sometimes not enough for RBAC writes). If you can't get elevated permissions, re-run the `main.bicep` deployment without `workshopUserPrincipalId`.
+
+### 4. Run the Workshop
 
 **Option A: Interactive Playbook** (recommended)
 - Open the [**Workshop Playbook**](https://htmlpreview.github.io/?https://github.com/ritwickmicrosoft/mlops-workshop-demo/blob/main/MLOps_Workshop_Playbook.html) in your browser
