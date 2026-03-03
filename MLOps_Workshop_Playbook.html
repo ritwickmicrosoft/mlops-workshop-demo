@@ -137,7 +137,7 @@ $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
       <div class="step-content">
         <div class="step-title">Deploy workshop infrastructure (Bicep)</div>
         <div class="step-desc">You don't “install” <code>.bicep</code> files — you deploy them to Azure. This provisions the Azure ML workspace, compute, storage, Key Vault, ACR, and monitoring.</div>
-        <pre>az bicep version
+        <pre style="white-space: pre-wrap; overflow-wrap: anywhere;">az bicep version
 az bicep install
 
 az account set --subscription $env:AZURE_SUBSCRIPTION_ID
