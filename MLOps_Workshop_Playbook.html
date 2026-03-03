@@ -132,6 +132,24 @@ $env:AZURE_RESOURCE_GROUP = "rg-dnd-mlops-demo"
 $env:AZURE_ML_WORKSPACE = "mlw-dndmlops2-dev"</pre>
       </div>
     </div>
+    <div class="step">
+      <div class="step-check" onclick="toggleCheck(this)"></div>
+      <div class="step-content">
+        <div class="step-title">Deploy workshop infrastructure (Bicep)</div>
+        <div class="step-desc">You don't “install” <code>.bicep</code> files — you deploy them to Azure. This provisions the Azure ML workspace, compute, storage, Key Vault, ACR, and monitoring.</div>
+        <pre>az bicep version
+az bicep install
+
+az account set --subscription $env:AZURE_SUBSCRIPTION_ID
+az group create -n $env:AZURE_RESOURCE_GROUP -l &lt;region&gt;
+
+# Optional: assign AzureML Data Scientist role to the workshop user
+$workshopUserPrincipalId = az ad signed-in-user show --query id -o tsv
+
+az deployment group create --resource-group $env:AZURE_RESOURCE_GROUP --template-file .\infra\main.bicep --parameters baseName=dndmlops environment=dev workshopUserPrincipalId=$workshopUserPrincipalId</pre>
+        <div class="step-desc">If role assignments fail, you may need <strong>Owner</strong> or <strong>User Access Administrator</strong>. If you can't get that, re-run without <code>workshopUserPrincipalId</code>.</div>
+      </div>
+    </div>
     <div class="note note-success"><code>az account show</code> displays correct subscription.</div>
   </section>
 
